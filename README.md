@@ -69,7 +69,7 @@ When a new version is released, pull the repository and rebuild:
 The service can maintain its consecutive reports even during upgrades. Use this command to upgrade while preserving your consecutives:
 
 ```bash
-./autowait.sh && cd .. && git clone https://github.com/1rabbit/uptime-goat-node.git && cd uptime-goat-node && docker-compose down && docker-compose build && docker-compose up -d && docker-compose logs -f
+./autowait.sh && git pull origin main && docker-compose down && docker-compose build && docker-compose up -d && docker-compose logs -f
 ```
 
 This will:
