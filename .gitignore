@@ -1,3 +1,5 @@
 .env
 CLAUDE.md
 .claude
+data\last_report_timestamp
+data/last_report_timestamp
