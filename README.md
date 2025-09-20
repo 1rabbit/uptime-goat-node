@@ -2,7 +2,7 @@
 
 A lightweight Node.js service that periodically sends reports to the [**Uptime Goat**](https://uptime-goat.com/) servers and automatically fetches endpoint updates.
 
-![Uptime Goat](data/goat.png)
+![Uptime Goat](data/goat.jpg)
 
 ## 🚀 Features
 
