@@ -1,9 +1,12 @@
+version: '3.8'
+
 services:
-  goat-report:
-    image: ghcr.io/ducktatorrr/uptime-goat-node:latest
-    container_name: goat_report_service
+  uptime-goat:
+    build: ./app
+    container_name: uptime_goat
     restart: always
     environment:
-      - GOAT_TOKEN=${GOAT_TOKEN}
+      - GOAT_ID=${GOAT_ID}
+      - GOAT_KEY=${GOAT_KEY}
     volumes:
-      - ./goat-report.log:/var/log/goat-report.log
+      - ./data:/data
