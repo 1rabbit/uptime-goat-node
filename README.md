@@ -4,7 +4,7 @@ A lightweight Node.js service that periodically sends reports to the [**Uptime G
 
 ![Uptime Goat](data/goat.jpg)
 
-## 🚀 Features
+## Features
 
 - **Lightning Fast**: Built with Node.js for minimal resource usage and fast performance
 - **Single Service**: Combined goat reporting and endpoint management in one clean service
@@ -12,7 +12,7 @@ A lightweight Node.js service that periodically sends reports to the [**Uptime G
 - **Docker Ready**: Alpine-based Docker image for quick deployment
 - **Auto-updating Endpoints**: Fetches latest endpoints every 10 minutes
 
-## 🐙 Quick Start with Docker Compose
+## Quick Start with Docker Compose
 
 **Prerequisites**:
 
@@ -81,7 +81,7 @@ This will:
 
 The service will automatically restore timing if restarted within the window.
 
-## 🐛 Error Handling
+## Error Handling
 
 If the request fails, the script logs the error message and retries on the next cycle.
 
@@ -91,6 +91,6 @@ The service includes:
 - Timeout handling for slow requests
 - Graceful shutdown on SIGINT
 
-## ⚖️ License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
