@@ -142,7 +142,7 @@ async function sendGoatReport(serverName, url, maxServerLen) {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(payload)
         },
-        timeout: 3000
+        timeout: 55000
       };
 
       let responseTime;
