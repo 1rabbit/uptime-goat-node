@@ -160,14 +160,14 @@ async function sendGoatReport(serverName, url, maxServerLen) {
               const padding = ' '.repeat(maxServerLen - serverName.length + 5);
 
               log('INFO', `🐐 ${minerName} → ${serverName}${padding}deviation ${String(deviationMs).padStart(4)}ms   ping ${responseTime}ms`);
-              resolve({ success: true });
+              resolve({ success: true, deviation: deviationMs });
             } else {
               log('ERROR', `Request failed for ${serverName}: Status ${res.statusCode}`);
-              resolve({ success: false });
+              resolve({ success: false, deviation: null });
             }
           } catch (error) {
             log('ERROR', `Request failed for ${serverName}: ${error.message}`);
-            resolve({ success: false });
+            resolve({ success: false, deviation: null });
           }
         });
       });
@@ -187,14 +187,14 @@ async function sendGoatReport(serverName, url, maxServerLen) {
       req.on('timeout', () => {
         req.destroy();
         log('ERROR', `Request timeout for ${serverName}`);
-        resolve({ success: false });
+        resolve({ success: false, deviation: null });
       });
 
       req.write(payload);
       req.end();
     } catch (error) {
       log('ERROR', `Request failed for ${serverName}: ${error.message}`);
-      resolve({ success: false });
+      resolve({ success: false, deviation: null });
     }
   });
 }
@@ -211,7 +211,17 @@ async function goatReportLoop(endpoints) {
     sendGoatReport(serverName, endpoints[serverName], maxServerLen)
   );
 
-  await Promise.all(promises);
+  const results = await Promise.all(promises);
+
+  // Check if all successful responses have deviations > 1000ms
+  const validDeviations = results.filter(r => r.success && r.deviation !== null).map(r => r.deviation);
+  const allDeviationsHigh = validDeviations.length > 0 && validDeviations.every(d => Math.abs(d) > 1000);
+
+  if (allDeviationsHigh) {
+    log('INFO', '⚠️  All deviations > 1000ms, adding 1000ms extra delay to next cycle');
+  }
+
+  return { needsExtraDelay: allDeviationsHigh };
 }
 
 // Main application
@@ -269,10 +279,14 @@ async function main() {
 
   // Recursive function to run report cycles
   async function runReportCycle() {
+    let extraDelay = 0;
     try {
       // Only send reports if we have valid endpoints
       if (endpoints && Object.keys(endpoints).length > 0) {
-        await goatReportLoop(endpoints);
+        const result = await goatReportLoop(endpoints);
+        if (result.needsExtraDelay) {
+          extraDelay = 1000; // Add 1 second extra delay
+        }
       } else {
         log('ERROR', 'No valid endpoints available, skipping this cycle');
       }
@@ -291,8 +305,8 @@ async function main() {
       log('ERROR', `Error in report cycle: ${error.message}. Continuing...`);
     }
 
-    // Update next target time for next cycle and save it
-    nextTargetTime += 60000;
+    // Update next target time for next cycle and save it (with extra delay if needed)
+    nextTargetTime += 60000 + extraDelay;
     await saveTimestamp(nextTargetTime);
 
     // Calculate delay to hit the exact target time
