@@ -213,15 +213,17 @@ async function goatReportLoop(endpoints) {
 
   const results = await Promise.all(promises);
 
-  // Check if all successful responses have deviations > 1000ms
+  // Check if all successful responses have deviations > 1000ms AND at least one < 2000ms
   const validDeviations = results.filter(r => r.success && r.deviation !== null).map(r => r.deviation);
   const allDeviationsHigh = validDeviations.length > 0 && validDeviations.every(d => Math.abs(d) > 1000);
+  const someDeviationUnder2000 = validDeviations.some(d => Math.abs(d) < 2000);
+  const needsExtraDelay = allDeviationsHigh && someDeviationUnder2000;
 
-  if (allDeviationsHigh) {
-    log('INFO', '⚠️  All deviations > 1000ms, adding 1000ms extra delay to next cycle');
+  if (needsExtraDelay) {
+    log('INFO', '⚠️  All deviations > 1000ms with at least one < 2000ms, adding 1000ms extra delay to next cycle');
   }
 
-  return { needsExtraDelay: allDeviationsHigh };
+  return { needsExtraDelay };
 }
 
 // Main application
