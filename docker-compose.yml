@@ -1,7 +1,8 @@
+version: '3.3'
 services:
-  uptime_goat:
+  uptime-goat:
     build: ./app
-    container_name: uptime_goat
+    container_name: uptime-goat
     restart: always
     environment:
       - GOAT_ID=${GOAT_ID}
