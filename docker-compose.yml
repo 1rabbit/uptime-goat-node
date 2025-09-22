@@ -1,5 +1,5 @@
 services:
-  uptime-goat:
+  uptime_goat:
     build: ./app
     container_name: uptime_goat
     restart: always
